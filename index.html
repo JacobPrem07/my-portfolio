@@ -217,6 +217,7 @@
 
     <div id="custom-cursor" class="hidden md:block"></div>
     
+    <!-- Interactive Canvas Layer generating the back-side ripples and lens divergence optics -->
     <canvas id="ripple-canvas"></canvas>
 
     <nav class="fixed top-0 left-0 w-full z-50 bg-slate-950/40 backdrop-blur-md border-b border-white/5">
@@ -256,11 +257,13 @@
         </div>
         <div class="flex-1 flex justify-center" data-aos="fade-left">
             <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-[2.5rem] p-1.5 liquid-glass flex items-center justify-center group shadow-2xl">
-                <img src="./Profile.jpg" alt="Premnath" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'" class="w-full h-full object-cover rounded-[2.2rem] opacity-90 group-hover:opacity-100 transition-opacity duration-500 bg-slate-900">
+                <!-- UPDATED TO Profile.png FOR GITHUB -->
+                <img src="./Profile.png" alt="Premnath" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'" class="w-full h-full object-cover rounded-[2.2rem] opacity-90 group-hover:opacity-100 transition-opacity duration-500 bg-slate-900">
             </div>
         </div>
     </header>
 
+    <!-- SKILLS PRESENTED IN A SUBTLE BLURRED LENS DIALATED GLASS CONTAINER -->
     <section id="skills" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div id="skills-box" class="premium-glass-card p-8 md:p-12 transition-all duration-300" data-aos="fade-up">
             <div class="text-center max-w-3xl mx-auto mb-16">
@@ -304,8 +307,16 @@
                             <img src="https://skillicons.dev/icons?i=ai" alt="Illustrator Logo" class="w-12 h-12 drop-shadow-md">
                             <span class="text-sm font-semibold text-slate-300 text-center">Illustrator</span>
                         </div>
+                        
+                        <!-- REPLACED BROKEN IMAGE PATH WITH EMBEDDED DAVINCI RESOLVE LOGO -->
                         <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
-                            <img src="https://skillicons.dev/icons?i=da" alt="DaVinci Resolve Logo" class="w-12 h-12 drop-shadow-md">
+                            <svg class="w-12 h-12 drop-shadow-md" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" fill="#1A1A1A"/>
+                                <path d="M12 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" fill="#FF4B4B"/>
+                                <path d="M7.25 13.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" fill="#FFB800"/>
+                                <path d="M16.75 13.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" fill="#00A3FF"/>
+                                <path d="M12 11c-1.38 0-2.5 1.12-2.5 2.5S10.62 16 12 16s2.5-1.12 2.5-2.5S13.38 11 12 11z" fill="#FFFFFF"/>
+                            </svg>
                             <span class="text-sm font-semibold text-slate-300 text-center">DaVinci Resolve</span>
                         </div>
                     </div>
@@ -408,6 +419,7 @@
         </div>
     </section>
 
+    <!-- PORTFOLIO PRESENTED IN A SUBTLE BLURRED LENS DIALATED GLASS CONTAINER -->
     <section id="portfolio" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div id="portfolio-box" class="premium-glass-card p-12 md:p-20 transition-all duration-300" data-aos="zoom-in">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Portfolio</h2>
