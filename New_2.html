@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premnath | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: #030712;
+            overflow-x: hidden;
+        }
+
+        /* Canvas layout layer positioned underneath presentation boxes */
+        #ripple-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* ----------------------------------------------------
+           1. PREMIUM GLASSMORPHISM WITH DIVERGENT LENS EDGES
+           ---------------------------------------------------- */
+        .premium-glass-card {
+            position: relative;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.15) 100%);
+            backdrop-filter: blur(8px) saturate(130%);
+            -webkit-backdrop-filter: blur(8px) saturate(130%);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+            z-index: 10;
+        }
+
+        /* Complex lens edge generating a physical glassy optical refraction look */
+        .premium-glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0.05) 70%, rgba(255, 255, 255, 0.18) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.08);
+        }
+
+        /* Outer divergent shadow layer to enrich the thick lens edge refraction look */
+        .premium-glass-card::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 22px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.08));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .premium-glass-card:hover {
+            transform: translateY(-6px) scale(1.005);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+            animation: animate-google-glow 4s linear infinite;
+        }
+
+        /* Profile Lens Glass */
+        .liquid-glass {
+            position: relative;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+                        inset 0 -1px 1px rgba(0, 0, 0, 0.2), 
+                        0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease;
+            z-index: 10;
+        }
+
+        .liquid-glass::before {
+            content: '';
+            position: absolute;
+            inset: -12px;
+            z-index: -1;
+            background: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853, #4285F4);
+            background-size: 400% 400%;
+            filter: blur(22px);
+            opacity: 0;
+            border-radius: 40%;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .liquid-glass:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .liquid-glass:hover::before {
+            opacity: 0.75;
+            animation: move-colors 4s linear infinite, distort-shape 3s ease-in-out infinite alternate;
+        }
+
+        /* ----------------------------------------------------
+           2. STANDARD SOLID CARDS (Timeline Blocks)
+           ---------------------------------------------------- */
+        .edge-glow-card {
+            position: relative;
+            background: #0f172a; 
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease;
+            z-index: 10;
+        }
+
+        .edge-glow-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+            animation: animate-google-glow 4s linear infinite;
+        }
+
+        /* ----------------------------------------------------
+           ANIMATIONS (Colors & Distortions)
+           ---------------------------------------------------- */
+        @keyframes move-colors {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        @keyframes distort-shape {
+            0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            100% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+        }
+
+        @keyframes animate-google-glow {
+            0%, 100% {
+                box-shadow: 
+                    -10px -10px 20px rgba(66, 133, 244, 0.2), 
+                    10px -10px 20px rgba(234, 67, 53, 0.2),   
+                    10px 10px 20px rgba(251, 188, 5, 0.2),    
+                    -10px 10px 20px rgba(52, 168, 83, 0.2);   
+            }
+            25% {
+                box-shadow: 
+                    -10px 10px 20px rgba(66, 133, 244, 0.2), 
+                    -10px -10px 20px rgba(234, 67, 53, 0.2), 
+                    10px -10px 20px rgba(251, 188, 5, 0.2), 
+                    10px 10px 20px rgba(52, 168, 83, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    10px 10px 20px rgba(66, 133, 244, 0.2), 
+                    -10px 10px 20px rgba(234, 67, 53, 0.2), 
+                    -10px -10px 20px rgba(251, 188, 5, 0.2), 
+                    10px 10px 20px rgba(52, 168, 83, 0.2);
+            }
+            75% {
+                box-shadow: 
+                    10px -10px 20px rgba(66, 133, 244, 0.2), 
+                    10px 10px 20px rgba(234, 67, 53, 0.2), 
+                    -10px -10px 20px rgba(251, 188, 5, 0.2), 
+                    -10px 10px 20px rgba(52, 168, 83, 0.2);
+            }
+        }
+
+        /* ----------------------------------------------------
+           CURSOR TRACKING
+           ---------------------------------------------------- */
+        #custom-cursor {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            position: fixed;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px #ffffff;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav, header, section, footer {
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            body { cursor: none; }
+            a, button, .hover-target, .liquid-glass, .premium-glass-card, .edge-glow-card { cursor: none; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+    <div id="custom-cursor" class="hidden md:block"></div>
+    
+    <canvas id="ripple-canvas"></canvas>
+
+    <nav class="fixed top-0 left-0 w-full z-50 bg-slate-950/40 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <span class="text-xl font-bold tracking-wider gradient-text">PREMNATH</span>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-blue-400 transition-colors duration-300">About</a>
+                <a href="#skills" class="hover:text-blue-400 transition-colors duration-300">Skills</a>
+                <a href="#experience" class="hover:text-blue-400 transition-colors duration-300">Experience & Education</a>
+                <a href="#portfolio" class="hover:text-blue-400 transition-colors duration-300">Portfolio</a>
+                <a href="#contact" class="hover:text-blue-400 transition-colors duration-300">Contact</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://www.linkedin.com/in/s-premnath-646b25310?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-[#0a66c2] transition-colors text-xl">
+                    <i class="fa-brands fa-linkedin"></i>
+                </a>
+                <a href="#contact" class="px-5 py-2.5 text-sm font-medium bg-blue-600/20 hover:bg-blue-600 border border-blue-500/30 rounded-xl transition-all duration-300 backdrop-blur-sm">Hire Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <header id="about" class="pt-40 pb-20 md:pt-56 md:pb-32 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
+        <div class="flex-1 space-y-6 text-center md:text-left" data-aos="fade-right">
+            <div class="flex flex-col sm:flex-row items-center md:items-start gap-3">
+                <span class="px-3 py-1 text-xs font-semibold tracking-wider text-blue-400 bg-blue-500/10 rounded-full uppercase border border-blue-500/20">Video Editor</span>
+            </div>
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">
+                Crafting Engaging <br class="hidden sm:inline"><span class="gradient-text">Visual Stories</span>
+            </h1>
+            <p class="text-lg text-slate-400 max-w-xl mx-auto md:mx-0 leading-relaxed">
+                I am a passionate video editor dedicated to creating engaging content through my editing skills. With experience in basic 2D animation, I always strive to deliver the best results through hard work, creativity, and attention to detail.
+            </p>
+            <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                <a href="#portfolio" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-medium transition shadow-lg shadow-indigo-600/20">View My Work</a>
+                <a href="#contact" class="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-medium transition backdrop-blur-sm">Get In Touch</a>
+            </div>
+        </div>
+        <div class="flex-1 flex justify-center" data-aos="fade-left">
+            <div class="relative w-64 h-64 sm:w-80 sm:h-80 rounded-[2.5rem] p-1.5 liquid-glass flex items-center justify-center group shadow-2xl">
+                <img src="./Profile.jpg" alt="Premnath" onerror="this.src='https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'" class="w-full h-full object-cover rounded-[2.2rem] opacity-90 group-hover:opacity-100 transition-opacity duration-500 bg-slate-900">
+            </div>
+        </div>
+    </header>
+
+    <section id="skills" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div id="skills-box" class="premium-glass-card p-8 md:p-12 transition-all duration-300" data-aos="fade-up">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Skills & Toolkit</h2>
+                <p class="mt-4 text-slate-400">Industry-standard tools and frameworks leveraged to produce high-impact, tailored video productions.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-200 flex items-center gap-3">
+                        <i class="fa-solid fa-pen-ruler text-blue-400"></i> Core Competencies
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">Cinematic Post-Production</div>
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">Basic 2D Animation</div>
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">Color Grading & Sound Design</div>
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">Creative Storytelling</div>
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">AI-Assisted Editing</div>
+                        <div class="p-5 bg-slate-950/40 border border-white/5 rounded-xl text-slate-300 font-medium text-center flex items-center justify-center">Generative AI Tools</div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xl font-bold text-slate-200 flex items-center gap-3">
+                        <i class="fa-solid fa-layer-group text-purple-400"></i> Software Mastery
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+                            <img src="https://skillicons.dev/icons?i=pr" alt="Premiere Pro Logo" class="w-12 h-12 drop-shadow-md">
+                            <span class="text-sm font-semibold text-slate-300 text-center">Premiere Pro</span>
+                        </div>
+                        <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+                            <img src="https://skillicons.dev/icons?i=ae" alt="After Effects Logo" class="w-12 h-12 drop-shadow-md">
+                            <span class="text-sm font-semibold text-slate-300 text-center">After Effects</span>
+                        </div>
+                        <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+                            <img src="https://skillicons.dev/icons?i=ps" alt="Photoshop Logo" class="w-12 h-12 drop-shadow-md">
+                            <span class="text-sm font-semibold text-slate-300 text-center">Photoshop</span>
+                        </div>
+                        <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+                            <img src="https://skillicons.dev/icons?i=ai" alt="Illustrator Logo" class="w-12 h-12 drop-shadow-md">
+                            <span class="text-sm font-semibold text-slate-300 text-center">Illustrator</span>
+                        </div>
+                        <div class="py-5 px-3 bg-slate-950/40 border border-white/5 rounded-xl flex flex-col items-center justify-center gap-3">
+                            <img src="https://skillicons.dev/icons?i=da" alt="DaVinci Resolve Logo" class="w-12 h-12 drop-shadow-md">
+                            <span class="text-sm font-semibold text-slate-300 text-center">DaVinci Resolve</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Experience & Education</h2>
+            <p class="mt-4 text-slate-400">A journey tracking academic benchmarks and professional milestones.</p>
+            
+            <div class="mt-8 inline-block px-8 py-4 bg-gradient-to-r from-blue-900/40 via-indigo-900/30 to-purple-900/40 rounded-2xl border border-indigo-500/30 shadow-xl backdrop-blur-sm" data-aos="zoom-in">
+                <span class="block text-xs uppercase tracking-widest font-bold text-indigo-400">Track Record Metric</span>
+                <span class="block text-3xl font-black mt-1 text-white tracking-tight">Total Experience: <span class="gradient-text">4.6 Years</span></span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-12">
+            <div>
+                <h3 class="text-2xl font-bold mb-8 text-slate-200 flex items-center gap-3" data-aos="fade-right">
+                    <i class="fa-solid fa-briefcase text-blue-400"></i> Professional Timeline
+                </h3>
+                <div class="relative border-l-2 border-slate-800 ml-4 space-y-12">
+                    <div class="relative pl-8" data-aos="fade-up">
+                        <div class="absolute -left-[21px] top-1 w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shadow-lg z-10">
+                            <i class="fa-solid fa-star text-amber-400 animate-pulse"></i>
+                        </div>
+                        <div class="edge-glow-card p-6 relative">
+                            <span class="text-xs font-semibold tracking-wider text-blue-400 uppercase">(2023 - 2026) - Present</span>
+                            <h4 class="text-xl font-bold text-slate-100 mt-1">Senior Video Editor</h4>
+                            <p class="text-md text-slate-300">LMES Academy (Edu Tech)</p>
+                            <ul class="text-sm text-slate-400 mt-3 list-disc pl-4 space-y-1.5">
+                                <li>Developed content for government projects, ensuring videos were tailored to facilitate easy comprehension for students.</li>
+                                <li>Utilized creative storytelling, visual effects, and basic 2D animations to make complex concepts accessible and engaging.</li>
+                                <li>Collaborated with educators and subject matter experts to align video content with curriculum goals.</li>
+                                <li>Managed video production from concept to completion, including editing, color grading, and sound design.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8" data-aos="fade-up" data-aos-delay="100">
+                        <div class="absolute -left-[21px] top-1 w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shadow-lg z-10">
+                            <i class="fa-solid fa-video text-blue-400"></i>
+                        </div>
+                        <div class="edge-glow-card p-6">
+                            <span class="text-xs font-semibold tracking-wider text-slate-400 uppercase">(2022-2023)</span>
+                            <h4 class="text-xl font-bold text-slate-100 mt-1">Video Editor</h4>
+                            <p class="text-md text-slate-300">Lovely Creations</p>
+                            <p class="text-sm text-slate-400 mt-2">Edited cinematic wedding videos and created engaging YouTube Shorts content.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8" data-aos="fade-up" data-aos-delay="200">
+                        <div class="absolute -left-[21px] top-1 w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shadow-lg z-10">
+                            <i class="fa-solid fa-film text-pink-400"></i>
+                        </div>
+                        <div class="edge-glow-card p-6">
+                            <span class="text-xs font-semibold tracking-wider text-slate-400 uppercase">2021 (6 Month)</span>
+                            <h4 class="text-xl font-bold text-slate-100 mt-1">Video Editor</h4>
+                            <p class="text-md text-slate-300">8b Studio</p>
+                            <p class="text-sm text-slate-400 mt-2">Edited cinematic wedding videos and created engaging YouTube Shorts content.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-2xl font-bold mb-8 text-slate-200 flex items-center gap-3" data-aos="fade-left">
+                    <i class="fa-solid fa-graduation-cap text-purple-400"></i> Academic Background & Extras
+                </h3>
+                <div class="relative border-l-2 border-slate-800 ml-4 space-y-12">
+                    <div class="relative pl-8" data-aos="fade-up">
+                        <div class="absolute -left-[21px] top-1 w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shadow-lg z-10">
+                            <i class="fa-solid fa-university text-purple-400"></i>
+                        </div>
+                        <div class="edge-glow-card p-6">
+                            <span class="text-xs font-semibold tracking-wider text-purple-400 uppercase">(2019-2022)</span>
+                            <h4 class="text-xl font-bold text-slate-100 mt-1">B.Sc in Visual Communication</h4>
+                            <p class="text-md text-slate-300">Chennai National Science and Arts College</p>
+                            <p class="text-sm text-slate-500 mt-2">Acquired strong foundational baselines in narrative editing logic, visual aesthetics, production design frameworks, and communications infrastructure.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative pl-8" data-aos="fade-up" data-aos-delay="100">
+                        <div class="absolute -left-[21px] top-1 w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shadow-lg z-10">
+                            <i class="fa-solid fa-language text-teal-400"></i>
+                        </div>
+                        <div class="edge-glow-card p-6">
+                            <h4 class="text-lg font-bold text-slate-100">Linguistic Fluency</h4>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <span class="px-3 py-1 bg-white/5 rounded-md text-xs font-medium text-slate-300 border border-white/10">Tamil</span>
+                                <span class="px-3 py-1 bg-white/5 rounded-md text-xs font-medium text-slate-300 border border-white/10">English</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="portfolio" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div id="portfolio-box" class="premium-glass-card p-12 md:p-20 transition-all duration-300" data-aos="zoom-in">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Portfolio</h2>
+            <p class="text-slate-400 max-w-2xl mx-auto leading-relaxed mt-4">
+                Click below to view my video editing portfolio and creative work drive directory.
+            </p>
+            <div class="pt-6 relative z-10">
+                <a href="https://drive.google.com/drive/folders/1SbRXzZdeWqz4tW-jq2HV7daC8KUAH9xb?usp=sharing" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 rounded-xl font-bold text-lg transition-all duration-300 shadow-xl shadow-indigo-600/20 hover:scale-[1.02]">
+                    <i class="fa-solid fa-folder-open"></i> Open Portfolio
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-6" data-aos="fade-right">
+                <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Let's Work Together</h2>
+                <p class="text-slate-400 leading-relaxed">
+                    Looking to add high-fidelity narrative timelines, clean cinematic structures, or responsive short-form media clips to your projects? Drop me a direct message line.
+                </p>
+                <div class="space-y-4 pt-4">
+                    <div class="flex items-center gap-4 text-slate-300">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-blue-400"><i class="fa-solid fa-envelope"></i></div>
+                        <a href="mailto:jacobprem07@gmail.com" class="hover:text-white transition">jacobprem07@gmail.com</a>
+                    </div>
+                    <div class="flex items-center gap-4 text-slate-300">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-purple-400"><i class="fa-solid fa-phone"></i></div>
+                        <a href="tel:+919941758378" class="hover:text-white transition">+91 99417 58378</a>
+                    </div>
+                    <div class="flex items-center gap-4 text-slate-300">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-pink-400"><i class="fa-solid fa-location-dot"></i></div>
+                        <span>Chennai</span>
+                    </div>
+                    <div class="flex items-center gap-4 text-slate-300">
+                        <div class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-[#0a66c2]"><i class="fa-brands fa-linkedin-in"></i></div>
+                        <a href="https://www.linkedin.com/in/s-premnath-646b25310?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener noreferrer" class="hover:text-white transition break-all">Connect on LinkedIn</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 edge-glow-card text-center space-y-4 flex flex-col justify-center items-center" data-aos="fade-left">
+                <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-3xl text-indigo-400 mb-2">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <h3 class="text-xl font-bold">Email Me Directly</h3>
+                <p class="text-sm text-slate-400 max-w-xs leading-relaxed">
+                    Have a project in mind? Click the link below to launch your email client instantly.
+                </p>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jacobprem07@gmail.com&su=Inquiry%20from%20Portfolio&body=Hi%20Premnath," target="_blank" rel="noopener noreferrer" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-medium transition duration-300 shadow-lg shadow-blue-600/10">
+                    Send Me Mail
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-10 border-t border-white/5 text-center text-xs text-slate-600 tracking-wider">
+        <p>&copy; 2026 Premnath. Core portfolio hub.</p>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 900, once: true, easing: 'ease-out-quad' });
+
+        // --- Custom Mouse Cursor ---
+        const cursorDot = document.getElementById('custom-cursor');
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`;
+            cursorDot.style.top = `${e.clientY}px`;
+        });
+
+        const targets = document.querySelectorAll('a, button, .liquid-glass, .premium-glass-card, .edge-glow-card');
+        targets.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursorDot.style.width = '24px';
+                cursorDot.style.height = '24px';
+                cursorDot.style.backgroundColor = 'transparent';
+                cursorDot.style.border = '2px solid rgba(255, 255, 255, 0.8)';
+            });
+            item.addEventListener('mouseleave', () => {
+                cursorDot.style.width = '8px';
+                cursorDot.style.height = '8px';
+                cursorDot.style.backgroundColor = '#ffffff';
+                cursorDot.style.border = 'none';
+            });
+        });
+
+        // ----------------------------------------------------
+        // CHROMATIC OPTICS DOTS SURFACE & GLASS DIVERGENT EFFECTS
+        // ----------------------------------------------------
+        const canvas = document.getElementById('ripple-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const gridGap = 24; 
+        let ripples = [];
+        let mouse = { x: -1000, y: -1000 };
+
+        // Cache elements bounding rectangles for glass refraction look up
+        let glassElements = [];
+        function updateGlassRects() {
+            glassElements = [
+                document.getElementById('skills-box'),
+                document.getElementById('portfolio-box')
+            ].filter(el => el !== null).map(el => el.getBoundingClientRect());
+        }
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            updateGlassRects();
+        });
+        
+        // Initial bounding check
+        setTimeout(updateGlassRects, 500);
+        window.addEventListener('scroll', updateGlassRects);
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            
+            if (Math.random() < 0.15) {
+                ripples.push({
+                    x: mouse.x,
+                    y: mouse.y,
+                    radius: 0,
+                    maxRadius: 220, 
+                    velocity: 2.8,   
+                    strength: 5.5,   
+                    alpha: 1
+                });
+            }
+        });
+
+        function animateRipples() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Cycle active water waves running behind items
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                let r = ripples[i];
+                r.radius += r.velocity;
+                r.alpha = 1 - (r.radius / r.maxRadius);
+                
+                if (r.radius >= r.maxRadius) {
+                    ripples.splice(i, 1);
+                }
+            }
+
+            for (let x = gridGap / 2; x < width; x += gridGap) {
+                for (let y = gridGap / 2; y < height; y += gridGap) {
+                    
+                    let baseDotAlpha = 0.12;
+                    let rippleInfluence = 0;
+                    
+                    let rX = x, rY = y;
+                    let gX = x, gY = y;
+                    let bX = x, bY = y;
+
+                    // 1. Process wave transformations occurring natively underneath background
+                    ripples.forEach(r => {
+                        let dx = x - r.x;
+                        let dy = y - r.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy);
+                        let waveDistance = Math.abs(distance - r.radius);
+                        
+                        if (waveDistance < 45) {
+                            let effectFactor = (1 - (waveDistance / 45)) * r.alpha;
+                            let pushFactor = Math.cos(distance * 0.05 - r.radius * 0.08) * r.strength * effectFactor;
+
+                            if (distance > 0) {
+                                let dirX = dx / distance;
+                                let dirY = dy / distance;
+
+                                rX += dirX * pushFactor * 1.3;
+                                rY += dirY * pushFactor * 1.3;
+                                gX += dirX * pushFactor;
+                                gY += dirY * pushFactor;
+                                bX += dirX * pushFactor * 0.7;
+                                bY += dirY * pushFactor * 0.7;
+                            }
+                            rippleInfluence += effectFactor;
+                        }
+                    });
+
+                    // 2. Structural checks applying divergent physical lens magnification at borders
+                    let glassDivergenceX = 0;
+                    let glassDivergenceY = 0;
+                    let insideGlass = false;
+
+                    for (let rect of glassElements) {
+                        // Check if dot coordinates reside inside bounding space of glass boxes
+                        if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
+                            insideGlass = true;
+                            
+                            // Calculate proximity distance relative to each border edge
+                            let distLeft = x - rect.left;
+                            let distRight = rect.right - x;
+                            let distTop = y - rect.top;
+                            let distBottom = rect.bottom - y;
+                            
+                            let minEdgeDistance = Math.min(distLeft, distRight, distTop, distBottom);
+                            
+                            // Apply diverging lens refraction transformation scaling if dot falls within edge rim boundary
+                            if (minEdgeDistance < 40) {
+                                let lensStrength = Math.pow(1 - (minEdgeDistance / 40), 2) * 12;
+                                
+                                // Direct vectors outward from box geometric center point matching a divergent glass lens layout
+                                let centerX = rect.left + rect.width / 2;
+                                let centerY = rect.top + rect.height / 2;
+                                let cDx = x - centerX;
+                                let cDy = y - centerY;
+                                let cDist = Math.sqrt(cDx * cDx + cDy * cDy);
+
+                                if (cDist > 0) {
+                                    glassDivergenceX = (cDx / cDist) * lensStrength;
+                                    glassDivergenceY = (cDy / cDist) * lensStrength;
+                                }
+                            }
+                            break; 
+                        }
+                    }
+
+                    // Apply the computed divergent structural shifts across all active channels
+                    rX += glassDivergenceX; rY += glassDivergenceY;
+                    gX += glassDivergenceX; gY += glassDivergenceY;
+                    bX += glassDivergenceX; bY += glassDivergenceY;
+
+                    let finalAlpha = baseDotAlpha + (rippleInfluence * 0.25);
+                    if (insideGlass) finalAlpha *= 0.6; // Slightly dampen dot brightness within glass face to protect text contrast
+                    if (finalAlpha > 0.5) finalAlpha = 0.5;
+                    
+                    let sizeRadius = 1.1 + (rippleInfluence * 0.4);
+
+                    // Render mesh layout dynamically using hardware blended screen composite modes
+                    if (rippleInfluence > 0.01 || glassDivergenceX !== 0 || glassDivergenceY !== 0) {
+                        ctx.globalCompositeOperation = "screen";
+                        
+                        // Red Vector Grid Point
+                        ctx.beginPath();
+                        ctx.arc(rX, rY, sizeRadius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(239, 68, 68, ${finalAlpha * 1.2})`; 
+                        ctx.fill();
+
+                        // Green Vector Grid Point
+                        ctx.beginPath();
+                        ctx.arc(gX, gY, sizeRadius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(34, 197, 94, ${finalAlpha})`; 
+                        ctx.fill();
+
+                        // Blue Vector Grid Point
+                        ctx.beginPath();
+                        ctx.arc(bX, bY, sizeRadius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(59, 130, 246, ${finalAlpha * 1.2})`; 
+                        ctx.fill();
+                        
+                        ctx.globalCompositeOperation = "source-over";
+                    } else {
+                        // Base structural mesh dots layout when remaining perfectly static
+                        ctx.beginPath();
+                        ctx.arc(x + glassDivergenceX, y + glassDivergenceY, 1.1, 0, Math.PI * 2);
+                        ctx.fillStyle = insideGlass ? `rgba(71, 85, 105, ${baseDotAlpha * 0.5})` : `rgba(51, 65, 85, ${baseDotAlpha})`;
+                        ctx.fill();
+                    }
+                }
+            }
+            requestAnimationFrame(animateRipples);
+        }
+        animateRipples();
+    </script>
+</body>
+</html>
